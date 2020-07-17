@@ -9,7 +9,7 @@ resource "null_resource" "nomad_cluster_node_deploy_config" {
       destination = "/tmp/nomad.hcl"
       content = <<-EOT
       ${templatefile(
-      "${path.module}/nomad.hcl",
+      "${path.module}/nomad-server.hcl",
       {
         cluster_nodes = var.cluster_nodes
         node_id       = each.key
