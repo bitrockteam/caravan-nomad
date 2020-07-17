@@ -2,6 +2,8 @@ resource "null_resource" "nomad_cluster_node_deploy_config" {
   triggers = {
     ids = join("-", var.cluster_nodes_ids)
   }
+  
+  for_each = var.cluster_nodes
 
  provisioner "file" {
     destination = "/tmp/nomad.hcl"
