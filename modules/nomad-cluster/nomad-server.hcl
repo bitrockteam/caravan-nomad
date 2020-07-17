@@ -1,3 +1,4 @@
+datacenter = "hcpoc"
 data_dir = "/var/lib/nomad"
 server {
   enabled = true
