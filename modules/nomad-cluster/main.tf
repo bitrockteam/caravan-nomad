@@ -12,6 +12,7 @@ resource "null_resource" "nomad_cluster_node_deploy_config" {
       "${path.module}/nomad-server.hcl",
       {
         cluster_nodes = var.cluster_nodes
+        node_id       = each.key
       }
   )}
       EOT
