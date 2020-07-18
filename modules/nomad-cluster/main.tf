@@ -40,6 +40,7 @@ provisioner "remote-exec" {
 resource "null_resource" "nomad_cluster_node_init" {
   count = length(var.cluster_nodes)
   depends_on = [
+    module.consul-cluster,
     null_resource.nomad_cluster_node_deploy_config
   ]
   triggers = {
