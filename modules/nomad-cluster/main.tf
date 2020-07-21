@@ -1,8 +1,8 @@
 resource "null_resource" "nomad_cluster_node_deploy_config" {
-  triggers = {
-    ids = join("-", var.cluster_nodes_ids)
-  }
-  
+  # triggers = {
+  #   ids = join("-", var.cluster_nodes_ids)
+  # }
+
   for_each = var.cluster_nodes
 
   provisioner "file" {
@@ -11,8 +11,9 @@ resource "null_resource" "nomad_cluster_node_deploy_config" {
       ${templatefile(
       "${path.module}/nomad-server.hcl",
       {
-        cluster_nodes = var.cluster_nodes
-        node_id       = each.key
+        cluster_nodes   = var.cluster_nodes
+        node_id         = each.key
+        consul_address  = var.consul_address
       }
   )}
       EOT

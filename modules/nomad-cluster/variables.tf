@@ -22,9 +22,9 @@ variable "ssh_timeout" {
 variable "cluster_nodes_ids" {
   type = list(string)
 }
-# variable "vault_address" {
-#   type = string
-# }
+variable "consul_address" {
+  type = string
+}
 # variable "vault_token_file" {
 #   type = string
 #   default = ".root_token"
