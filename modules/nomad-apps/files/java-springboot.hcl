@@ -10,7 +10,7 @@ job "java-springboot" {
             config {
                 jar_path    = "local/spring-echo-example-1.0.0.jar"
                 jvm_options = ["-Xmx2048m", "-Xms256m"]
-                args        = ["--server.port=8080"]
+                args        = ["--server.port=${NOMAD_PORT_http}"]
             }
 
             artifact {
