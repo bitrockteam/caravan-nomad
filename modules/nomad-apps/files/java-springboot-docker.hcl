@@ -1,9 +1,19 @@
-job "java-springboot" {
+job "bmed" {
     datacenters = ["hcpoc"]
     group "web" {
         network {
             mode = "bridge"
-        }   
+        }
+      
+        service {
+          name = "java-api"
+          port = "8080"
+
+          connect {
+            sidecar_service {}
+          }
+        }
+      
         task "springboot" {
             driver = "java"
 
@@ -33,22 +43,11 @@ job "java-springboot" {
                 connect = {
                     sidecar_service {
                         proxy {
-                        upstreams {
-                            destination_name = "springboot"
-                            local_bind_port = 8080
-                        }
-                    }   
-                    }
-                    sidecar_task {
-                        name  = "connect-proxy-java"
-                        lifecycle {
-                            hook = "prestart"
-                            sidecar = true
-                        }
-                        driver = "docker"
-                        config {
-                            image = "envoyproxy/envoy:v1.14-latest"
-                        }
+                            upstreams {
+                                destination_name = "java-api"
+                                local_bind_port = 8080
+                            }
+                        }   
                     }
                 }
                 check {
