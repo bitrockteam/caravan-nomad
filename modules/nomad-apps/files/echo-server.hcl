@@ -1,15 +1,28 @@
-
 job "echo-server" {
     datacenters = ["hcpoc"]
     group "web" {
         network {
             mode = "bridge"
-        }   
+        }
+
+        service {
+            name = "echo-api"
+            port = "9001"
+
+            connect {
+                sidecar_service {}
+            }
+        }
+
         task "echo" {
             driver = "exec"
 
             config {
                 command = "local/echo-server"
+            }
+          
+            env {
+              PORT = "9001"
             }
 
             artifact {
@@ -32,24 +45,11 @@ job "echo-server" {
                 connect = {
                     sidecar_service {
                         proxy {
-                        upstreams {
-                            destination_name = "echo"
-                            local_bind_port = 8080
-                        }
-                    }   
-                    }
-                    sidecar_task {
-                        name  = "connect-proxy-echo"
-                        driver = "raw_exec"
-                        config {
-                            command = "/usr/bin/envoy"
-                            args  = [
-                                "-c",
-                                "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
-                                "-l",
-                                "${meta.connect.log_level}"
-                            ]
-                        }
+                          upstreams {
+                              destination_name = "echo-api"
+                              local_bind_port = "9001"
+                          }
+                      }   
                     }
                 }
                 check {
