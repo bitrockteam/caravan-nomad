@@ -78,24 +78,3 @@ provisioner "remote-exec" {
 }
 
 }
-
-resource "null_resource" "nomad_cluster_node_init" {
-  count = length(var.cluster_nodes)
-  depends_on = [
-    null_resource.nomad_cluster_node_deploy_config
-  ]
-  triggers = {
-    nodes = length(keys(null_resource.nomad_cluster_node_deploy_config)) > 0 ? join("-", [for k, v in null_resource.nomad_cluster_node_deploy_config : v.id]) : ""
-  }
-
-  provisioner "remote-exec" {
-    script = "${path.module}/scripts/nomad_cluster_init.sh"
-    connection {
-      type        = "ssh"
-      user        = var.ssh_user
-      timeout     = var.ssh_timeout
-      private_key = var.ssh_private_key
-      host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[count.index]]
-    }
-  }
-}
