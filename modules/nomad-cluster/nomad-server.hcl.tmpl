@@ -34,6 +34,7 @@ consul {
   ssl        = true
   verify_ssl = true
 
+  tokens = "{{ with secret "secret/consul/nomad_server_token" }}{{ .Data.token }}{{ end }}"
 }
 
 tls {

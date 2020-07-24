@@ -6,10 +6,10 @@ resource "null_resource" "nomad_cluster_node_deploy_config" {
   for_each = var.cluster_nodes
 
   provisioner "file" {
-      destination = "/tmp/nomad.hcl"
+      destination = "/tmp/nomad.hcl.tmpl"
       content = <<-EOT
       ${templatefile(
-      "${path.module}/nomad-server.hcl",
+      "${path.module}/nomad-server.hcl.tmpl",
       {
         cluster_nodes   = var.cluster_nodes
         node_id         = each.key
@@ -26,7 +26,7 @@ resource "null_resource" "nomad_cluster_node_deploy_config" {
 }
 
 provisioner "remote-exec" {
-  inline = ["sudo mv /tmp/nomad.hcl /etc/nomad.d/nomad.hcl"]
+  inline = ["sudo mv /tmp/nomad.hcl.tmpl /etc/nomad.d/nomad.hcl.tmpl"]
   connection {
     type        = "ssh"
     user        = var.ssh_user
