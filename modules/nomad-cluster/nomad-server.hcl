@@ -21,7 +21,7 @@ plugin "raw_exec" {
 }
 
 consul {
-  address = "${consul_address}"
+  address = "consul.service.hcpoc.consul:8501"
   server_service_name = "nomad-server"
   client_service_name = "nomad-client"
   auto_advertise      = true
