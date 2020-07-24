@@ -28,11 +28,25 @@ consul {
   server_auto_join    = true
   client_auto_join    = true
 
-  ca_file    = "/etc/nomad.d/ca"
-  cert_file  = "/etc/nomad.d/cert"
-  key_file   = "/etc/nomad.d/keyfile"
+  ca_file    = "/etc/consul.d/ca"
+  cert_file  = "/etc/consul.d/cert"
+  key_file   = "/etc/consul.d/keyfile"
   ssl        = true
   verify_ssl = true
+
+  token = "/etc/consul.d/vault_token"
+}
+
+tls {
+    http = true
+    rpc  = true
+
+    ca_file    = "/etc/consul.d/ca"
+    cert_file  = "/etc/consul.d/cert"
+    key_file   = "/etc/consul.d/keyfile"
+
+    verify_https_client    = false
+    #verify_server_hostname = true
 }
 
 telemetry {
