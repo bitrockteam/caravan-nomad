@@ -21,7 +21,7 @@ plugin "raw_exec" {
 }
 
 consul {
-  address = "consul.service.hcpoc.consul:8501"
+  address = "127.0.0.1:8501"
   server_service_name = "nomad"
   client_service_name = "nomad-client"
   auto_advertise      = true
@@ -34,7 +34,6 @@ consul {
   ssl        = true
   verify_ssl = true
 
-  token = "/etc/consul.d/vault_token"
 }
 
 tls {
