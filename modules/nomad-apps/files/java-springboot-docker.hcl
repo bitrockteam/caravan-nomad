@@ -36,28 +36,6 @@ job "bmed" {
                     port "http" {}
                 }
             }
-
-            service {
-                tags = [ "web" ]
-                port = "http",
-                connect = {
-                    sidecar_service {
-                        proxy {
-                            upstreams {
-                                destination_name = "java-api"
-                                local_bind_port = 8080
-                            }
-                        }   
-                    }
-                }
-                check {
-                    type = "http"
-                    port = "http"
-                    path = "/actuator/health"
-                    interval = "5s"
-                    timeout = "2s"
-                }
-            }
         }
     }
 }
