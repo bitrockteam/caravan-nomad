@@ -1,23 +1,17 @@
-job "java-springboot" {
+job "java-bmed-no-docker" {
     datacenters = ["hcpoc"]
-    group "web" {
+    group "springboot" {
         network {
             mode = "bridge"
             port "http" {}
+            port "http_mgmt" {}
         }
 
         service {
                 tags = [ "web" ]
-                port = "http",
+                port = "9001",
                 connect = {
-                    sidecar_service {
-                        proxy {
-                        upstreams {
-                            destination_name = "springboot"
-                            local_bind_port = 8080
-                        }
-                    }   
-                    }
+                    sidecar_service {}
                     sidecar_task {
                         name  = "connect-proxy-java"
                         driver = "exec"
@@ -34,10 +28,10 @@ job "java-springboot" {
                 }
                 check {
                     type = "http"
-                    port = "http"
+                    port = "http_mgmt"
                     path = "/actuator/health"
-                    interval = "5s"
-                    timeout = "2s"
+                    interval = "30s"
+                    timeout = "10s"
                 }
             }
 
@@ -45,19 +39,31 @@ job "java-springboot" {
             driver = "java"
 
             config {
-                jar_path    = "local/spring-echo-example-1.0.0.jar"
+                jar_path    = "local/microservizio-1.0.0-SNAPSHOT.jar"
                 jvm_options = ["-Xmx2048m", "-Xms256m"]
-                args        = ["--server.port=8080"]
             }
 
             artifact {
-                source = "gcs::https://www.googleapis.com/storage/v1/cfgs-hcpoc-boomboom-468826369/spring-echo-example-1.0.0.jar",
+                source = "gcs::https://www.googleapis.com/storage/v1/cfgs-bmed-116849772/microservizio-1.0.0-SNAPSHOT.jar",
                 options = {
                 token = "ya29.c.KmnUB7SLinlviSZqlNsHjPUuel0UVl0PZHOE_UeYe1vUHSp6pzVaV5MemsRpvQ05b7VWwyjxXFf3apdzZFetyNIF3h6DVnR4lvCs1jqgJH32llZlgpLHDDKXfKpT9j9FHMFn0PpzCS7bjgU"
                 },
                 destination = "local/"
             }
+
+            env {
+                SERVER_PORT="${NOMAD_PORT_http}"
+                MANAGEMENT_SERVER_PORT="${NOMAD_PORT_http_mgmt}"
+            }
+
+            resources {
+                memory = 2048
+            }
             
         }
     }
 }
+
+[2020-07-28 16:59:42.206][31534][critical][main] [external/envoy/source/server/server.cc:95] error initializing configuration '/secrets/envoy_bootstrap.json': cannot bind '127.0.0.1:19001': Cannot assign requested address
+[2020-07-28 16:59:42.206][31534][info][main] [external/envoy/source/server/server.cc:606] exiting
+cannot bind '127.0.0.1:19001': Cannot assign requested address

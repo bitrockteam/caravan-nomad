@@ -21,18 +21,18 @@ job "tester_no_docker" {
                     }
                 }
                 sidecar_task {
-                        name  = "connect-proxy-java"
-                        driver = "exec"
-                        config {
-                            command = "/usr/bin/envoy"
-                            args  = [
-                                "-c",
-                                "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
-                                "-l",
-                                "${meta.connect.log_level}"
-                            ]
-                        }
+                    name  = "connect-proxy-java"
+                    driver = "exec"
+                    config {
+                        command = "/usr/bin/envoy"
+                        args  = [
+                            "-c",
+                            "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
+                            "-l",
+                            "${meta.connect.log_level}"
+                        ]
                     }
+                }
             }
         }
 
@@ -41,7 +41,7 @@ job "tester_no_docker" {
             driver = "docker"
 
             config {
-                image = "gcr.io/hcpoc-boomboom-468826369/busyboxplus@sha256:4cd8ccdc346a1ccf22228f18e3a6bc2d21f81cfa6600023b3a3669ab3f432e88"
+                image = "gcr.io/bmed-116849772/busyboxplus:curl"
                 command = "sleep"
                 args = ["10000000"]
             }
@@ -60,6 +60,19 @@ job "tester_no_docker" {
             port = "http",
             connect = {
                 sidecar_service {}
+                sidecar_task {
+                    name  = "connect-proxy-java"
+                    driver = "exec"
+                    config {
+                        command = "/usr/bin/envoy"
+                        args  = [
+                            "-c",
+                            "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
+                            "-l",
+                            "${meta.connect.log_level}"
+                        ]
+                    }
+                }
             }
             check {
                 type = "http"
@@ -82,7 +95,7 @@ job "tester_no_docker" {
             }
 
             artifact {
-                source = "gcs::https://www.googleapis.com/storage/v1/cfgs-hcpoc-boomboom-468826369/echo-server",
+                source = "gcs::https://www.googleapis.com/storage/v1/cfgs-bmed-116849772/echo-server",
                 options = {
                 token = "ya29.c.KmnUB7SLinlviSZqlNsHjPUuel0UVl0PZHOE_UeYe1vUHSp6pzVaV5MemsRpvQ05b7VWwyjxXFf3apdzZFetyNIF3h6DVnR4lvCs1jqgJH32llZlgpLHDDKXfKpT9j9FHMFn0PpzCS7bjgU"
                 },
