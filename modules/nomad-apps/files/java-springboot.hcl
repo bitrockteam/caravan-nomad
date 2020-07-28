@@ -3,7 +3,43 @@ job "java-springboot" {
     group "web" {
         network {
             mode = "bridge"
-        }   
+        }
+
+        service {
+                tags = [ "web" ]
+                port = "http",
+                connect = {
+                    sidecar_service {
+                        proxy {
+                        upstreams {
+                            destination_name = "springboot"
+                            local_bind_port = 8080
+                        }
+                    }   
+                    }
+                    sidecar_task {
+                        name  = "connect-proxy-java"
+                        driver = "exec"
+                        config {
+                            command = "/usr/bin/envoy"
+                            args  = [
+                                "-c",
+                                "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
+                                "-l",
+                                "${meta.connect.log_level}"
+                            ]
+                        }
+                    }
+                }
+                check {
+                    type = "http"
+                    port = "http"
+                    path = "/actuator/health"
+                    interval = "5s"
+                    timeout = "2s"
+                }
+            }
+
         task "springboot" {
             driver = "java"
 
@@ -27,40 +63,7 @@ job "java-springboot" {
                 }
             }
 
-            service {
-                tags = [ "web" ]
-                port = "http",
-                connect = {
-                    sidecar_service {
-                        proxy {
-                        upstreams {
-                            destination_name = "springboot"
-                            local_bind_port = 8080
-                        }
-                    }   
-                    }
-                    sidecar_task {
-                        name  = "connect-proxy-java"
-                        driver = "raw_exec"
-                        config {
-                            command = "/usr/bin/envoy"
-                            args  = [
-                                "-c",
-                                "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
-                                "-l",
-                                "${meta.connect.log_level}"
-                            ]
-                        }
-                    }
-                }
-                check {
-                    type = "http"
-                    port = "http"
-                    path = "/actuator/health"
-                    interval = "5s"
-                    timeout = "2s"
-                }
-            }
+            
         }
     }
 }
