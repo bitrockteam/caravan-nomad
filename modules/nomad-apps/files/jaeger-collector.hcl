@@ -1,13 +1,13 @@
 job "jaeger-collector" {
     datacenters = ["hcpoc"]
-    group "web" {
+    group "collector" {
         network {
             mode = "bridge"
             port "http" {}
         }
         service {
             name = "jaeger-collector"
-            tags = [ "web", "monitoring" ]
+            tags = [ "monitoring" ]
             port = "http",
             check {
                 type = "http"

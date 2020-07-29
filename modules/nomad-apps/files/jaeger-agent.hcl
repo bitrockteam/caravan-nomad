@@ -3,21 +3,25 @@ job "jaeger-agent" {
 
     type = "system"
 
-    group "web" {
+    group "agent" {
 
         network {
             mode = "bridge"
-            port "http" {}
+            port "http" {
+                to = -1
+            }
         }
         service {
-            tags = [ "web", "monitoring" ]
-            port = "http",
+            name = "jaeger-agent"
+            tags = [ "monitoring" ]
+            port = "14271",
             check {
                 type = "http"
                 port = "http"
                 path = "/"
                 interval = "5s"
                 timeout = "2s"
+                /*  expose = true rpc error: 1 error occurred: * exposed service check web->jaeger-agent-web->service: "jaeger-agent-web" check requires use of Nomad's builtin Connect proxy */
             }
             connect = {
                 sidecar_service {
@@ -26,7 +30,15 @@ job "jaeger-agent" {
                            destination_name = "jaeger-collector"
                            local_bind_port = 14250
                         }
-                    }   
+                        expose {
+                            path {
+                                path            = "/"
+                                protocol        = "http"
+                                local_path_port = 14271
+                                listener_port   = "http"
+                            }
+                        }
+                    }
                 }
                 sidecar_task {
                     driver = "exec"
@@ -48,7 +60,7 @@ job "jaeger-agent" {
             config {
                 command = "/usr/local/bin/jaeger-agent"
                 args = [
-                    "--admin.http.host-port=0.0.0.0:${NOMAD_PORT_http}",
+                    # "--admin.http.host-port=127.0.0.1:14271",
                     "--reporter.grpc.host-port=127.0.0.1:14250"
                 ]
             }
