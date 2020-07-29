@@ -1,27 +1,27 @@
 job "tester_no_docker" {
     datacenters = ["hcpoc"]
 
-    group "curl" {
+    group "curl-no-docker" {
         network {
             mode = "bridge"
             port "http" {}
         }
 
         service {
-            name = "curl-service"
+            name = "curl-service-no-docker"
             port = "8080"
 
             connect {
                 sidecar_service {
                     proxy {
                         upstreams {
-                            destination_name = "echo-service"
+                            destination_name = "echo-service-no-docker"
                             local_bind_port = 8080
                         }
                     }
                 }
                 sidecar_task {
-                    name  = "connect-proxy-java"
+                    name  = "connect-proxy-java-no-docker"
                     driver = "exec"
                     config {
                         command = "/usr/bin/envoy"
@@ -36,7 +36,7 @@ job "tester_no_docker" {
             }
         }
 
-        task "curl" {
+        task "curl-docker" {
           
             driver = "docker"
 
@@ -48,20 +48,20 @@ job "tester_no_docker" {
         }
     }
 
-    group "echo-server" {
+    group "echo-server-no-docker" {
         network {
             mode = "bridge"
             port "http" {}
         }
 
         service {
-            name = "echo-service"
+            name = "echo-service-no-docker"
             tags = [ "web" ]
             port = "http",
             connect = {
                 sidecar_service {}
                 sidecar_task {
-                    name  = "connect-proxy-java"
+                    name  = "connect-proxy-echo-service-no-docker"
                     driver = "exec"
                     config {
                         command = "/usr/bin/envoy"
@@ -83,7 +83,7 @@ job "tester_no_docker" {
             }
         }
 
-        task "echo" {
+        task "echo-no-docker" {
             driver = "exec"
 
             config {

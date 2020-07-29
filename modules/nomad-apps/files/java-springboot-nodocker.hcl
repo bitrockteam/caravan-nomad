@@ -11,6 +11,19 @@ job "bmed" {
 
           connect {
             sidecar_service {}
+            sidecar_task {
+                name  = "connect-proxy-java"
+                driver = "exec"
+                config {
+                    command = "/usr/bin/envoy"
+                    args  = [
+                        "-c",
+                        "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
+                        "-l",
+                        "${meta.connect.log_level}"
+                    ]
+                }
+            }
           }
         }
       
