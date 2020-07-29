@@ -18,7 +18,17 @@ job "jaeger-query" {
                 timeout = "2s"
             }
             connect = {
-                sidecar_service { }
+                sidecar_service { 
+                    proxy {
+                        upstreams {
+                            destination_name = "jaeger-agent"
+                            local_bind_port = 6831
+                        }
+                        config {
+                            protocol = "http"
+                        }
+                    }
+                }
                 /* sidecar_task {
                     driver = "exec"
                     shutdown_delay = "5s"

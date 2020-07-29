@@ -8,13 +8,15 @@ job "jaeger-agent" {
         network {
             mode = "bridge"
             port "http" {
-                to = -1
+                 # to = -1
+            }
+            port "udp" {
             }
         }
         service {
             name = "jaeger-agent"
             tags = [ "monitoring" ]
-            port = "14271",
+            port = "udp",
             check {
                 type = "http"
                 port = "http"
@@ -30,14 +32,14 @@ job "jaeger-agent" {
                            destination_name = "jaeger-collector"
                            local_bind_port = 14250
                         }
-                        expose {
+                        /* expose {
                             path {
                                 path            = "/"
                                 protocol        = "http"
                                 local_path_port = 14271
                                 listener_port   = "http"
                             }
-                        }
+                        } */
                     }
                 }
                 /* sidecar_task {
@@ -71,7 +73,11 @@ job "jaeger-agent" {
                 command = "/usr/local/bin/jaeger-agent"
                 args = [
                     # "--admin.http.host-port=127.0.0.1:14271",
-                    "--reporter.grpc.host-port=127.0.0.1:14250"
+                    "--admin.http.host-port=0.0.0.0:${NOMAD_PORT_http}",
+                    "--reporter.grpc.host-port=127.0.0.1:14250",
+                    "--processor.jaeger-compact.server-host-port=0.0.0.0:${NOMAD_PORT_udp}",
+                    "--reporter.grpc.discovery.min-peers=1",
+                    "--log-level=trace"
                 ]
             }
         }
