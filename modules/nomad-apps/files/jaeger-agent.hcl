@@ -40,18 +40,28 @@ job "jaeger-agent" {
                         }
                     }
                 }
-                sidecar_task {
+                /* sidecar_task {
                     driver = "exec"
+                    shutdown_delay = "5s"
                     config {
                         command = "/usr/bin/envoy"
                         args  = [
                             "-c",
                             "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
                             "-l",
-                            "${meta.connect.log_level}"
+                            "${meta.connect.log_level}",
+                            "--disable-hot-restart"
                         ]
                     }
-                }
+                    resources {
+                        cpu    = 250
+                        memory = 128
+                    }
+                    logs {
+                        max_files     = 2
+                        max_file_size = 2
+                    }
+                } */
             }
         }
         task "agent" {
