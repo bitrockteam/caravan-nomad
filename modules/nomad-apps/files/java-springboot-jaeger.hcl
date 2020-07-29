@@ -13,10 +13,10 @@ job "java-springboot-jaeger" {
                 connect = {
                     sidecar_service {
                         proxy {
-                            upstreams {
+                            /* upstreams {
                                 destination_name = "jaeger-agent"
                                 local_bind_port = 6831
-                            }
+                            } */
                         }
                     }
                 }
@@ -35,6 +35,7 @@ job "java-springboot-jaeger" {
             config {
                 jar_path    = "local/OpenTracing-AppA-0.0.1-SNAPSHOT.jar"
                 jvm_options = ["-Xmx2048m", "-Xms256m"]
+                args = ["--opentracing.jaeger.udp-sender.host=${attr.unique.network.ip-address}"]
             }
 
             artifact {

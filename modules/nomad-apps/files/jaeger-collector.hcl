@@ -4,11 +4,12 @@ job "jaeger-collector" {
         network {
             mode = "bridge"
             port "http" {}
+            port "http_span" {}
         }
         service {
             name = "jaeger-collector"
             tags = [ "monitoring" ]
-            port = "http",
+            port = "http_span",
             check {
                 type = "http"
                 port = "http"
@@ -17,7 +18,13 @@ job "jaeger-collector" {
                 timeout = "2s"
             }
             connect = {
-                sidecar_service { }
+                sidecar_service {
+                    proxy {
+                        config {
+                            protocol = "grpc"
+                        }
+                    }
+                 }
                 /* sidecar_task {
                     driver = "exec"
                     shutdown_delay = "5s"
@@ -50,6 +57,7 @@ job "jaeger-collector" {
                 command = "/usr/local/bin/jaeger-collector"
                 args = [
                     "--admin.http.host-port=0.0.0.0:${NOMAD_PORT_http}",
+                    "--collector.grpc-server.host-port=127.0.0.1:${NOMAD_PORT_http_span}"
                 ]
             }
 

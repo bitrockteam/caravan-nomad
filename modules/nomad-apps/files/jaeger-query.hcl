@@ -20,10 +20,10 @@ job "jaeger-query" {
             connect = {
                 sidecar_service { 
                     proxy {
-                        upstreams {
+                        /* upstreams {
                             destination_name = "jaeger-agent"
                             local_bind_port = 6831
-                        }
+                        } */
                         config {
                             protocol = "http"
                         }
@@ -68,6 +68,8 @@ job "jaeger-query" {
             env {
                 SPAN_STORAGE_TYPE = "elasticsearch"
                 ES_SERVER_URLS = "http://10.128.0.6:9200"
+                JAEGER_AGENT_HOST = "${attr.unique.network.ip-address}"
+                JAEGER_AGENT_PORT = "6831"
             }
         }
     }

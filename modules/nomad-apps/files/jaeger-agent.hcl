@@ -11,6 +11,8 @@ job "jaeger-agent" {
                  # to = -1
             }
             port "udp" {
+                static = 6831
+                to = 6831
             }
         }
         service {
@@ -40,6 +42,9 @@ job "jaeger-agent" {
                                 listener_port   = "http"
                             }
                         } */
+                        config {
+                            protocol = "udp"
+                        }
                     }
                 }
                 /* sidecar_task {
@@ -74,10 +79,9 @@ job "jaeger-agent" {
                 args = [
                     # "--admin.http.host-port=127.0.0.1:14271",
                     "--admin.http.host-port=0.0.0.0:${NOMAD_PORT_http}",
-                    "--reporter.grpc.host-port=127.0.0.1:14250",
-                    "--processor.jaeger-compact.server-host-port=0.0.0.0:${NOMAD_PORT_udp}",
-                    "--reporter.grpc.discovery.min-peers=1",
-                    "--log-level=trace"
+                    "--reporter.grpc.host-port=${NOMAD_UPSTREAM_ADDR_jaeger_collector}",
+                    "--processor.jaeger-compact.server-host-port=:${NOMAD_PORT_udp}",
+                    "--reporter.grpc.discovery.min-peers=1"
                 ]
             }
         }
