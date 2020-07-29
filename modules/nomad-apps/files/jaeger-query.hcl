@@ -1,17 +1,18 @@
-job "jaeger-collector" {
+job "jaeger-query" {
     datacenters = ["hcpoc"]
-    group "collector" {
+    group "query" {
         network {
             mode = "bridge"
             port "http" {}
+            port "http_admin" {}
         }
         service {
-            name = "jaeger-collector"
+            name = "jaeger-query"
             tags = [ "monitoring" ]
             port = "http",
             check {
                 type = "http"
-                port = "http"
+                port = "http_admin"
                 path = "/"
                 interval = "5s"
                 timeout = "2s"
@@ -43,13 +44,14 @@ job "jaeger-collector" {
             }
             
         }
-        task "collector" {
+        task "query" {
             driver = "exec"
 
             config {
-                command = "/usr/local/bin/jaeger-collector"
+                command = "/usr/local/bin/jaeger-query"
                 args = [
-                    "--admin.http.host-port=0.0.0.0:${NOMAD_PORT_http}",
+                    "--admin.http.host-port=0.0.0.0:${NOMAD_PORT_http_admin}",
+                    "--query.host-port=0.0.0.0:${NOMAD_PORT_http}"
                 ]
             }
 
