@@ -82,7 +82,7 @@ job "tester_no_docker" {
             }
 
             artifact {
-                source = "gcs::https://www.googleapis.com/storage/v1/cfgs-hcpoc-boomboom-468826369/echo-server",
+                source = "gcs::https://www.googleapis.com/storage/v1/cfgs-bmed-1173886834/echo-server",
                 options = {
                 token = "ya29.c.KmnUB7SLinlviSZqlNsHjPUuel0UVl0PZHOE_UeYe1vUHSp6pzVaV5MemsRpvQ05b7VWwyjxXFf3apdzZFetyNIF3h6DVnR4lvCs1jqgJH32llZlgpLHDDKXfKpT9j9FHMFn0PpzCS7bjgU"
                 },

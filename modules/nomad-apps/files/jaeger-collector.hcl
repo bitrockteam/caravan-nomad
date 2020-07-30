@@ -63,7 +63,7 @@ job "jaeger-collector" {
 
             env {
                 SPAN_STORAGE_TYPE = "elasticsearch"
-                ES_SERVER_URLS = "http://10.128.0.6:9200"
+                ES_SERVER_URLS = "http://10.128.0.2:9200"
             }
         }
     }
