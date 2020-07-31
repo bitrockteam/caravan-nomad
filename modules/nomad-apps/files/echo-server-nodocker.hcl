@@ -29,7 +29,8 @@ job "tester_no_docker" {
                             "-c",
                             "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
                             "-l",
-                            "${meta.connect.log_level}"
+                            "${meta.connect.log_level}",
+                            "--disable-hot-restart"
                         ]
                     }
                 }
@@ -41,7 +42,7 @@ job "tester_no_docker" {
             driver = "docker"
 
             config {
-                image = "gcr.io/bmed-116849772/busyboxplus:curl"
+                image = "gcr.io/bmed-1173886834/busyboxplus:curl"
                 command = "sleep"
                 args = ["10000000"]
             }
@@ -69,18 +70,19 @@ job "tester_no_docker" {
                             "-c",
                             "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
                             "-l",
-                            "${meta.connect.log_level}"
+                            "${meta.connect.log_level}",
+                            "--disable-hot-restart"
                         ]
                     }
                 }
             }
-            check {
+            /*check {
                 type = "http"
                 port = "http"
                 path = "/health"
                 interval = "30s"
                 timeout = "2s"
-            }
+            }*/
         }
 
         task "echo-no-docker" {
