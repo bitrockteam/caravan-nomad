@@ -20,6 +20,10 @@ job "jaeger-collector" {
             connect = {
                 sidecar_service {
                     proxy {
+                        upstreams {
+                            destination_name = "elastic"
+                            local_bind_port = 9200
+                        }
                         config {
                             protocol = "grpc"
                         }
@@ -63,7 +67,7 @@ job "jaeger-collector" {
 
             env {
                 SPAN_STORAGE_TYPE = "elasticsearch"
-                ES_SERVER_URLS = "http://10.128.0.2:9200"
+                ES_SERVER_URLS = "http://10.128.0.4:9200"
             }
         }
     }

@@ -67,7 +67,7 @@ job "jaeger-query" {
 
             env {
                 SPAN_STORAGE_TYPE = "elasticsearch"
-                ES_SERVER_URLS = "http://10.128.0.2:9200"
+                ES_SERVER_URLS = "http://10.128.0.4:9200"
                 JAEGER_AGENT_HOST = "${attr.unique.network.ip-address}"
                 JAEGER_AGENT_PORT = "6831"
             }
