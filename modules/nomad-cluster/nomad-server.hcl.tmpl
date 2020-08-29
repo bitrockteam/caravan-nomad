@@ -37,6 +37,13 @@ consul {
   token = "{{ with secret "secret/data/consul/nomad_server_token" }}{{ .Data.data.token }}{{ end }}"
 }
 
+vault {
+  enabled          = true
+  address          = "http://127.0.0.1:7200"
+  token            = "{{ file "/etc/nomad.d/vault_token" }}"
+  tls_skip_verify  = true
+}
+
 tls {
     http = true
     rpc  = true
