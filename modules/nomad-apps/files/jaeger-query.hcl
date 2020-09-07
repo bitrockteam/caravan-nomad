@@ -1,5 +1,14 @@
 job "jaeger-query" {
     datacenters = ["hcpoc"]
+
+    type = "service"
+
+    constraint {
+        attribute = "${attr.unique.hostname}"
+        operator  = "="
+        value     = "monitoring"
+    }
+
     group "query" {
         network {
             mode = "bridge"
@@ -18,44 +27,43 @@ job "jaeger-query" {
                 timeout = "2s"
             }
             connect = {
-                sidecar_service { 
-                    proxy {
-                        /* upstreams {
-                            destination_name = "jaeger-agent"
-                            local_bind_port = 6831
-                        } */
-                        config {
-                            protocol = "http"
-                        }
-                    }
-                }
-                /* sidecar_task {
+                sidecar_service {}
+                sidecar_task {
+                    name  = "connect-jaeger-query"
                     driver = "exec"
-                    shutdown_delay = "5s"
                     config {
                         command = "/usr/bin/envoy"
                         args  = [
                             "-c",
                             "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
                             "-l",
-                            "${meta.connect.log_level}",
-                            "--disable-hot-restart"
+                            "${meta.connect.log_level}"
                         ]
                     }
-                    resources {
-                        cpu    = 250
-                        memory = 128
-                    }
-                    logs {
-                        max_files     = 2
-                        max_file_size = 2
-                    }
-                } */
+                }
             }
             
         }
-        task "query" {
+
+        task "loopback" {
+            lifecycle {
+                hook = "prestart"
+            }
             driver = "exec"
+            user = "root"
+            config = {
+                command = "/sbin/ifup"
+                args = ["lo"]
+            }
+        }
+
+        task "jaeger-query" {
+            driver = "exec"
+
+            template {
+              data = "nameserver {{env `NOMAD_HOST_IP_http`}}"
+              destination = "etc/resolv.conf"
+            }
 
             config {
                 command = "/usr/local/bin/jaeger-query"
@@ -67,7 +75,7 @@ job "jaeger-query" {
 
             env {
                 SPAN_STORAGE_TYPE = "elasticsearch"
-                ES_SERVER_URLS = "http://10.128.0.4:9200"
+                ES_SERVER_URLS = "http://elastic-internal.service.hcpoc.consul:9200"
                 JAEGER_AGENT_HOST = "${attr.unique.network.ip-address}"
                 JAEGER_AGENT_PORT = "6831"
             }

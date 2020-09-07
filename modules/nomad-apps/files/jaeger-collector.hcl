@@ -1,5 +1,14 @@
 job "jaeger-collector" {
     datacenters = ["hcpoc"]
+
+    type = "service"
+
+    constraint {
+        attribute = "${attr.unique.hostname}"
+        operator  = "="
+        value     = "monitoring"
+    }
+
     group "collector" {
         network {
             mode = "bridge"
@@ -18,44 +27,42 @@ job "jaeger-collector" {
                 timeout = "2s"
             }
             connect = {
-                sidecar_service {
-                    proxy {
-                        upstreams {
-                            destination_name = "elastic"
-                            local_bind_port = 9200
-                        }
-                        config {
-                            protocol = "grpc"
-                        }
-                    }
-                 }
-                /* sidecar_task {
+                sidecar_service {}
+                 sidecar_task {
+                    name  = "connect-jaeger-collector"
                     driver = "exec"
-                    shutdown_delay = "5s"
                     config {
                         command = "/usr/bin/envoy"
                         args  = [
                             "-c",
                             "${NOMAD_SECRETS_DIR}/envoy_bootstrap.json",
                             "-l",
-                            "${meta.connect.log_level}",
-                            "--disable-hot-restart"
+                            "${meta.connect.log_level}"
                         ]
                     }
-                    resources {
-                        cpu    = 250
-                        memory = 128
-                    }
-                    logs {
-                        max_files     = 2
-                        max_file_size = 2
-                    }
-                } */
+                }
             }
-            
         }
+
+        task "loopback" {
+            lifecycle {
+                hook = "prestart"
+            }
+            driver = "exec"
+            user = "root"
+            config = {
+                command = "/sbin/ifup"
+                args = ["lo"]
+            }
+        }
+
         task "collector" {
             driver = "exec"
+
+            template {
+              data = "nameserver {{env `NOMAD_HOST_IP_http`}}"
+              destination = "etc/resolv.conf"
+            }
 
             config {
                 command = "/usr/local/bin/jaeger-collector"
@@ -67,7 +74,7 @@ job "jaeger-collector" {
 
             env {
                 SPAN_STORAGE_TYPE = "elasticsearch"
-                ES_SERVER_URLS = "http://10.128.0.4:9200"
+                ES_SERVER_URLS = "http://elastic-internal.service.hcpoc.consul:9200"
             }
         }
     }
