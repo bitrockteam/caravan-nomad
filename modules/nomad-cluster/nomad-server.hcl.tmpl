@@ -39,7 +39,7 @@ consul {
 
 vault {
   enabled          = true
-  address          = "http://127.0.0.1:7200"
+  address          = "http://127.0.0.1:8200"
   token            = "{{ file "/etc/nomad.d/vault_token" }}"
   tls_skip_verify  = true
 }
