@@ -13,6 +13,7 @@ resource "null_resource" "nomad_cluster_node_deploy_config" {
     {
       cluster_nodes = var.cluster_nodes
       node_id       = each.key
+      dc_name       = var.dc_name
     }
 )}
       EOT
