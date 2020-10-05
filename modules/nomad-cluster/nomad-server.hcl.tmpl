@@ -40,7 +40,7 @@ consul {
 vault {
   enabled          = true
   address          = "http://127.0.0.1:8200"
-  token            = "{{ with secret "auth/token/roles/nomad-cluster" }}{{ .Data.data.token }}{{ end }}"
+  token            = "{{ file "/etc/nomad.d/vault_token" }}"
   tls_skip_verify  = true
   task_token_ttl = "1h"
   create_from_role = "nomad-cluster"
