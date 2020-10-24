@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+while ! curl --output /dev/null --silent --head --fail -k https://localhost:4646; do   
+  sleep 5s
+done
 nomad acl bootstrap
 awk '(/Secret/ || /Accessor/)'| sudo tee /root/nomad_tokens && \
 sleep 5s
