@@ -42,3 +42,7 @@ variable "ssh_bastion_user" {
 variable "cluster_nodes_ids" {
   type = list(string)
 }
+variable "pre13_depends_on" {
+  type    = any
+  default = null
+}
