@@ -101,6 +101,8 @@ provisioner "remote-exec" {
 
 resource "null_resource" "nomad_acl_bootstrap" {
   depends_on = [
+    module.hashicorp-bootstrap.module.vault_cluster,
+    module.hashicorp-bootstrap.module.consul-cluster,
     null_resource.nomad_cluster_node_deploy_config
   ]
 
