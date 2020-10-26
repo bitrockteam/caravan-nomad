@@ -153,7 +153,7 @@ resource "null_resource" "nomad_acl_bootstrap" {
   ]
 
   provisioner "remote-exec" {
-    script = templatefile("${path.module}/scripts/nomad_acl_bootstrap.sh", { cluster_nodes = var.var.cluster_nodes_public_ips })
+    script = "${path.module}/scripts/nomad_acl_bootstrap.sh"
     connection {
       type                = "ssh"
       user                = var.ssh_user
