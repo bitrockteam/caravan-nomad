@@ -34,7 +34,7 @@ connection {
     destination = "/tmp/nomad-server.hcl"
     content = <<-EOT
       ${templatefile(
-    "${path.module}/nomad-server.hcl.tmpl",
+    "${path.module}/nomad-server.hcl",
     {
       cluster_nodes = var.cluster_nodes
       node_id       = each.key
