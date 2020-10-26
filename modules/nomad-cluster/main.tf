@@ -30,6 +30,31 @@ connection {
 }
 }
 
+  provisioner "file" {
+    destination = "/tmp/nomad-server.hcl"
+    content = <<-EOT
+      ${templatefile(
+    "${path.module}/nomad-server.hcl.tmpl",
+    {
+      cluster_nodes = var.cluster_nodes
+      node_id       = each.key
+      dc_name       = var.dc_name
+    }
+)}
+      EOT
+  connection {
+    type                = "ssh"
+    user                = var.ssh_user
+    private_key         = var.ssh_private_key
+    timeout             = var.ssh_timeout
+    host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+    bastion_host        = var.ssh_bastion_host
+    bastion_port        = var.ssh_bastion_port
+    bastion_private_key = var.ssh_bastion_private_key
+    bastion_user        = var.ssh_bastion_user
+  }
+}
+
 provisioner "file" {
   destination = "/tmp/nomad_cert.tmpl"
   content     = file("${path.module}/nomad_cert.tmpl")
@@ -50,23 +75,6 @@ provisioner "file" {
 provisioner "file" {
   destination = "/tmp/nomad_keyfile.tmpl"
   content     = file("${path.module}/nomad_keyfile.tmpl")
-
-  connection {
-    type                = "ssh"
-    user                = var.ssh_user
-    private_key         = var.ssh_private_key
-    timeout             = var.ssh_timeout
-    host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-    bastion_host        = var.ssh_bastion_host
-    bastion_port        = var.ssh_bastion_port
-    bastion_private_key = var.ssh_bastion_private_key
-    bastion_user        = var.ssh_bastion_user
-  }
-}
-
-provisioner "file" {
-  destination = "/tmp/nomad-server.hcl"
-  content     = file("${path.module}/nomad-server.hcl")
 
   connection {
     type                = "ssh"
