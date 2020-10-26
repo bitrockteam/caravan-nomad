@@ -124,6 +124,28 @@ provisioner "remote-exec" {
 
 }
 
+
+resource "null_resource" "nomad_server_join" {
+  depends_on = [
+    var.pre13_depends_on,
+    null_resource.nomad_cluster_node_deploy_config
+  ]
+  provisioner "remote-exec" {
+    inline = ["nomad server join ${var.cluster_nodes[keys(var.cluster_nodes)[1]]} && nomad server join ${var.cluster_nodes[keys(var.cluster_nodes)[2]]}"]
+    connection {
+        type                = "ssh"
+        user                = var.ssh_user
+        timeout             = var.ssh_timeout
+        private_key         = var.ssh_private_key
+        host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
+        bastion_host        = var.ssh_bastion_host
+        bastion_port        = var.ssh_bastion_port
+        bastion_private_key = var.ssh_bastion_private_key
+        bastion_user        = var.ssh_bastion_user
+      }
+  }
+}
+
 resource "null_resource" "nomad_acl_bootstrap" {
   depends_on = [
     var.pre13_depends_on,
@@ -131,7 +153,7 @@ resource "null_resource" "nomad_acl_bootstrap" {
   ]
 
   provisioner "remote-exec" {
-    script = "${path.module}/scripts/nomad_acl_bootstrap.sh"
+    script = templatefile("${path.module}/scripts/nomad_acl_bootstrap.sh", { cluster_nodes = var.var.cluster_nodes_public_ips })
     connection {
       type                = "ssh"
       user                = var.ssh_user
