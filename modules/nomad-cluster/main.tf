@@ -65,6 +65,23 @@ provisioner "file" {
 }
 
 provisioner "file" {
+  destination = "/tmp/nomad-server.hcl"
+  content     = file("${path.module}/nomad-server.hcl")
+
+  connection {
+    type                = "ssh"
+    user                = var.ssh_user
+    private_key         = var.ssh_private_key
+    timeout             = var.ssh_timeout
+    host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+    bastion_host        = var.ssh_bastion_host
+    bastion_port        = var.ssh_bastion_port
+    bastion_private_key = var.ssh_bastion_private_key
+    bastion_user        = var.ssh_bastion_user
+  }
+}
+
+provisioner "file" {
   destination = "/tmp/nomad_ca.tmpl"
   content     = file("${path.module}/nomad_ca.tmpl")
 
@@ -82,7 +99,7 @@ provisioner "file" {
 }
 
 provisioner "remote-exec" {
-  inline = ["sudo mv /tmp/nomad.hcl.tmpl /etc/nomad.d/nomad.hcl.tmpl && sudo mv /tmp/nomad_ca.tmpl /etc/nomad.d/nomad_ca.tmpl && sudo mv /tmp/nomad_cert.tmpl /etc/nomad.d/nomad_cert.tmpl && sudo mv /tmp/nomad_keyfile.tmpl /etc/nomad.d/nomad_keyfile.tmpl"]
+  inline = ["sudo mv /tmp/nomad.hcl.tmpl /etc/nomad.d/nomad.hcl.tmpl && sudo mv /tmp/nomad_ca.tmpl /etc/nomad.d/nomad_ca.tmpl && sudo mv /tmp/nomad_cert.tmpl /etc/nomad.d/nomad_cert.tmpl && sudo mv /tmp/nomad_keyfile.tmpl /etc/nomad.d/nomad_keyfile.tmpl && sudo mv /tmp/nomad-server.hcl /etc/nomad.d/nomad-server.hcl"]
   connection {
     type                = "ssh"
     user                = var.ssh_user
