@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-while ! curl --output /dev/null --silent --head --fail http://localhost:4646; do   
+while ! curl --output /dev/null --silent --fail  http://localhost:4646/v1/status/leader; do   
   sleep 5s
 done
 nomad acl bootstrap
