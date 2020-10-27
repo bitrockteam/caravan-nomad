@@ -37,7 +37,7 @@ export NOMAD_TOKEN="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" &&
 nomad acl policy apply -description "Anonymous policy (full-access)" anonymous nomad-anon.hcl && \
 { [ -z "`sudo cat /root/nomad_tokens | awk '/Secret/{print $2}'`" ] ||
   vault kv put secret/nomad/bootstrap_token secretid="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" accessorid="`sudo cat /root/nomad_tokens | awk '/Access/{print $4}'`" && \
-  vvault write nomad/config/access address=http://127.0.0.1:4646 token="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" token="`sudo cat /root/nomad_tokens | awk '/Access/{print $4}'`" && \
+  vault write nomad/config/access address=http://127.0.0.1:4646 token="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" token="`sudo cat /root/nomad_tokens | awk '/Access/{print $4}'`" && \
   vault write nomad/role/token-manager type=management global=true
 } && \
 sudo rm -f /root/nomad_tokens nomad-anon.hcl
