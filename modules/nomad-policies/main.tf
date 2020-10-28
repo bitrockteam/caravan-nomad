@@ -15,3 +15,9 @@ resource "nomad_acl_policy" "nomad_app_devs" {
   description = "Application developers policy"
   rules_hcl   = file("${path.module}/acls/nomad-app-devs.hcl")
 }
+
+resource "nomad_acl_policy" "nomad_app_devs_volumes" {
+  name        = "nomad-app-devs-volumes"
+  description = "Application developers policy, plus volumes capabilities"
+  rules_hcl   = file("${path.module}/acls/nomad-app-devs-volumes.hcl")
+}
