@@ -12,5 +12,9 @@ export NOMAD_TOKEN="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" &&
   vault kv put secret/nomad/bootstrap_token secretid="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" accessorid="`sudo cat /root/nomad_tokens | awk '/Access/{print $4}'`" && \
   vault write nomad/config/access address=http://127.0.0.1:4646 token="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" && \
   vault write nomad/role/token-manager type=management global=true
+  vault write nomad/role/app-devs-volumes policies=nomad-app-devs-volumes
+  vault write nomad/role/app-devs policies=nomad-app-devs
+  vault write nomad/role/ops policies=nomad-ops
+  vault write nomad/role/anon-restriced policies=nomad-anon-restricted
 } && \
 sudo rm -f /root/nomad_tokens nomad-anon.hcl
