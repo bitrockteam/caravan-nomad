@@ -15,6 +15,6 @@ export NOMAD_TOKEN="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" &&
   vault write nomad/role/app-devs-volumes policies=nomad-app-devs-volumes
   vault write nomad/role/app-devs policies=nomad-app-devs
   vault write nomad/role/ops policies=nomad-ops
-  vault write nomad/role/anon-restriced policies=nomad-anon-restricted
+  vault write nomad/role/anon-restricted policies=nomad-anon-restricted
 } && \
 sudo rm -f /root/nomad_tokens nomad-anon.hcl
