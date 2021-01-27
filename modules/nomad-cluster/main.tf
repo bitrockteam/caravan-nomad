@@ -131,7 +131,7 @@ resource "null_resource" "nomad_server_join" {
     null_resource.nomad_cluster_node_deploy_config
   ]
   provisioner "remote-exec" {
-    inline = ["nomad server join ${var.cluster_nodes[keys(var.cluster_nodes)[1]]} && nomad server join ${var.cluster_nodes[keys(var.cluster_nodes)[2]]}"]
+    inline = ["while ! curl --output /dev/null --silent --fail  http://localhost:4646; do sleep 5s; done && nomad server join ${var.cluster_nodes[keys(var.cluster_nodes)[1]]} && nomad server join ${var.cluster_nodes[keys(var.cluster_nodes)[2]]}"]
     connection {
         type                = "ssh"
         user                = var.ssh_user
@@ -149,7 +149,8 @@ resource "null_resource" "nomad_server_join" {
 resource "null_resource" "nomad_acl_bootstrap" {
   depends_on = [
     var.pre13_depends_on,
-    null_resource.nomad_cluster_node_deploy_config
+    null_resource.nomad_cluster_node_deploy_config,
+    null_resource.nomad_server_join
   ]
 
   provisioner "remote-exec" {
