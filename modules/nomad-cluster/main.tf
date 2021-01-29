@@ -11,9 +11,10 @@ resource "null_resource" "nomad_cluster_node_deploy_config" {
       ${templatefile(
     "${path.module}/nomad-server.hcl.tmpl",
     {
-      cluster_nodes = var.cluster_nodes
-      node_id       = each.key
-      dc_name       = var.dc_name
+      cluster_nodes           = var.cluster_nodes
+      node_id                 = each.key
+      dc_name                 = var.dc_name
+      control_plane_role_name = var.control_plane_vault_role
     }
 )}
       EOT
@@ -30,29 +31,29 @@ connection {
 }
 }
 
-  provisioner "file" {
-    destination = "/tmp/nomad-server.hcl"
-    content = <<-EOT
+provisioner "file" {
+  destination = "/tmp/nomad-server.hcl"
+  content = <<-EOT
       ${templatefile(
-    "${path.module}/nomad-server.hcl",
-    {
-      cluster_nodes = var.cluster_nodes
-      node_id       = each.key
-      dc_name       = var.dc_name
-    }
+  "${path.module}/nomad-server.hcl",
+  {
+    cluster_nodes = var.cluster_nodes
+    node_id       = each.key
+    dc_name       = var.dc_name
+  }
 )}
       EOT
-  connection {
-    type                = "ssh"
-    user                = var.ssh_user
-    private_key         = var.ssh_private_key
-    timeout             = var.ssh_timeout
-    host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-    bastion_host        = var.ssh_bastion_host
-    bastion_port        = var.ssh_bastion_port
-    bastion_private_key = var.ssh_bastion_private_key
-    bastion_user        = var.ssh_bastion_user
-  }
+connection {
+  type                = "ssh"
+  user                = var.ssh_user
+  private_key         = var.ssh_private_key
+  timeout             = var.ssh_timeout
+  host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+  bastion_host        = var.ssh_bastion_host
+  bastion_port        = var.ssh_bastion_port
+  bastion_private_key = var.ssh_bastion_private_key
+  bastion_user        = var.ssh_bastion_user
+}
 }
 
 provisioner "file" {
@@ -133,16 +134,16 @@ resource "null_resource" "nomad_server_join" {
   provisioner "remote-exec" {
     inline = ["while ! curl --output /dev/null --silent --fail  http://localhost:4646; do sleep 5s; done && nomad server join ${var.cluster_nodes[keys(var.cluster_nodes)[1]]} && nomad server join ${var.cluster_nodes[keys(var.cluster_nodes)[2]]}"]
     connection {
-        type                = "ssh"
-        user                = var.ssh_user
-        timeout             = var.ssh_timeout
-        private_key         = var.ssh_private_key
-        host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
-        bastion_host        = var.ssh_bastion_host
-        bastion_port        = var.ssh_bastion_port
-        bastion_private_key = var.ssh_bastion_private_key
-        bastion_user        = var.ssh_bastion_user
-      }
+      type                = "ssh"
+      user                = var.ssh_user
+      timeout             = var.ssh_timeout
+      private_key         = var.ssh_private_key
+      host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
+      bastion_host        = var.ssh_bastion_host
+      bastion_port        = var.ssh_bastion_port
+      bastion_private_key = var.ssh_bastion_private_key
+      bastion_user        = var.ssh_bastion_user
+    }
   }
 }
 

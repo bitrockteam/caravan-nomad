@@ -6,7 +6,7 @@ variable "cluster_nodes_public_ips" {
   default = null
 }
 variable "dc_name" {
-  type    = string
+  type = string
 }
 variable "nomad_home" {
   type    = string
@@ -44,5 +44,9 @@ variable "cluster_nodes_ids" {
 }
 variable "pre13_depends_on" {
   type    = any
+  default = null
+}
+variable "control_plane_vault_role" {
+  type    = string
   default = null
 }
