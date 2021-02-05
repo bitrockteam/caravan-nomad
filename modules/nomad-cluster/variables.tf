@@ -42,10 +42,6 @@ variable "ssh_bastion_user" {
 variable "cluster_nodes_ids" {
   type = list(string)
 }
-variable "pre13_depends_on" {
-  type    = any
-  default = null
-}
 variable "control_plane_vault_role" {
   type    = string
   default = null
