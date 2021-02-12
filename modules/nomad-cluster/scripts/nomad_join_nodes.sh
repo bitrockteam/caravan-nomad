@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 NODES=(
   %{ for node in nodes ~}
   ${node}
@@ -16,7 +18,7 @@ echo "Yes."
 
 echo "Join nodes.."
 for n in $${NODES[@]}; do
-  if [[ "$n" != "$HOST" ]];
+  if [[ "$n" != $HOST ]];
   then
     while ! curl --output /dev/null --silent --fail  http://$n:4646; do 
       sleep 5s
