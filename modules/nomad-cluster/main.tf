@@ -131,40 +131,40 @@ resource "null_resource" "nomad_server_join" {
     null_resource.nomad_cluster_node_deploy_config
   ]
   provisioner "file" {
-  destination = "/tmp/nomad_join.sh"
-  content = <<-EOT
+    destination = "/tmp/nomad_join.sh"
+    content = <<-EOT
     ${templatefile("${path.module}/scripts/nomad_join_nodes.sh",
-  { 
-    nodes = var.cluster_nodes
-    host = var.cluster_nodes[keys(var.cluster_nodes)[0]]
-  })}
+    {
+      nodes = var.cluster_nodes
+      host  = var.cluster_nodes[keys(var.cluster_nodes)[0]]
+})}
     EOT
-    connection {
-      type                = "ssh"
-      user                = var.ssh_user
-      timeout             = var.ssh_timeout
-      private_key         = var.ssh_private_key
-      host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
-      bastion_host        = var.ssh_bastion_host
-      bastion_port        = var.ssh_bastion_port
-      bastion_private_key = var.ssh_bastion_private_key
-      bastion_user        = var.ssh_bastion_user
-    }
+connection {
+  type                = "ssh"
+  user                = var.ssh_user
+  timeout             = var.ssh_timeout
+  private_key         = var.ssh_private_key
+  host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
+  bastion_host        = var.ssh_bastion_host
+  bastion_port        = var.ssh_bastion_port
+  bastion_private_key = var.ssh_bastion_private_key
+  bastion_user        = var.ssh_bastion_user
+}
+}
+provisioner "remote-exec" {
+  inline = ["chmod +x /tmp/nomad_join.sh && sh /tmp/nomad_join.sh"]
+  connection {
+    type                = "ssh"
+    user                = var.ssh_user
+    timeout             = var.ssh_timeout
+    private_key         = var.ssh_private_key
+    host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
+    bastion_host        = var.ssh_bastion_host
+    bastion_port        = var.ssh_bastion_port
+    bastion_private_key = var.ssh_bastion_private_key
+    bastion_user        = var.ssh_bastion_user
   }
-  provisioner "remote-exec" {
-    inline = ["chmod +x /tmp/nomad_join.sh && sh /tmp/nomad_join.sh"]
-    connection {
-      type                = "ssh"
-      user                = var.ssh_user
-      timeout             = var.ssh_timeout
-      private_key         = var.ssh_private_key
-      host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
-      bastion_host        = var.ssh_bastion_host
-      bastion_port        = var.ssh_bastion_port
-      bastion_private_key = var.ssh_bastion_private_key
-      bastion_user        = var.ssh_bastion_user
-    }
-  }
+}
 }
 
 resource "null_resource" "nomad_acl_bootstrap" {
