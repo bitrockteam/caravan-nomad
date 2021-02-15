@@ -1,16 +1,20 @@
 variable "cluster_nodes" {
-  type = map(any)
+  type        = map(any)
+  description = "A map in form of 'node-name' => 'node's private IP' of the nodes to provision the cluster on"
 }
 variable "cluster_nodes_public_ips" {
-  type    = map(any)
-  default = null
+  type        = map(any)
+  description = "The public IPs of the node to SSH into them"
+  default     = null
 }
 variable "dc_name" {
-  type = string
+  type        = string
+  description = "Name of the datacenter of the consul cluster"
 }
 variable "nomad_home" {
-  type    = string
-  default = "/var/lib/nomad"
+  type        = string
+  description = "The directory where the consul's data is kept on the nodes"
+  default     = "/var/lib/nomad"
 }
 variable "ssh_private_key" {
   type = string
@@ -40,7 +44,8 @@ variable "ssh_bastion_user" {
   default = null
 }
 variable "cluster_nodes_ids" {
-  type = list(string)
+  type        = list(string)
+  description = "list of strings which are IDs of the instance resources and are used to `trigger` the provisioning of `null` resources on instance recreation"
 }
 variable "control_plane_vault_role" {
   type    = string
