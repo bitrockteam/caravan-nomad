@@ -4,6 +4,13 @@ set -e
 while ! curl --output /dev/null --silent --fail  http://localhost:4646/v1/status/leader; do   
   sleep 5s
 done
+
+if [[ -n $LICENSE ]]
+then
+  echo "Adding Nomad License"
+  echo "$LICENSE" | nomad license put -
+fi
+
 nomad acl bootstrap | awk '(/Secret/ || /Accessor/)'| sudo tee /root/nomad_tokens && \
 sleep 5s
 export `sudo sh /root/vault.vars` && \
