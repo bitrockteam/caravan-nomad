@@ -30,7 +30,6 @@ No Modules.
 | cluster\_nodes\_public\_ips | The public IPs of the node to SSH into them | `map(any)` | `null` | no |
 | control\_plane\_vault\_role | n/a | `string` | `null` | no |
 | dc\_name | Name of the datacenter of the consul cluster | `string` | n/a | yes |
-| license | Nomad Enterprise License | `string` | `""` | no |
 | nomad\_home | The directory where the consul's data is kept on the nodes | `string` | `"/var/lib/nomad"` | no |
 | ssh\_bastion\_host | n/a | `string` | `null` | no |
 | ssh\_bastion\_port | n/a | `string` | `"22"` | no |

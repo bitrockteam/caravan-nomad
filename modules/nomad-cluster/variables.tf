@@ -51,8 +51,3 @@ variable "control_plane_vault_role" {
   type    = string
   default = null
 }
-variable "license" {
-  type        = string
-  default     = ""
-  description = "Nomad Enterprise License"
-}
