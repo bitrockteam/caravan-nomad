@@ -9,23 +9,26 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| nomad | n/a |
+| <a name="provider_nomad"></a> [nomad](#provider\_nomad) | n/a |
 
 ## Modules
 
-No Modules.
+No modules.
 
 ## Resources
 
-| Name |
-|------|
-| [nomad_acl_policy](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/acl_policy) |
+| Name | Type |
+|------|------|
+| [nomad_acl_policy.nomad_anon](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/acl_policy) | resource |
+| [nomad_acl_policy.nomad_app_devs](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/acl_policy) | resource |
+| [nomad_acl_policy.nomad_app_devs_volumes](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/acl_policy) | resource |
+| [nomad_acl_policy.nomad_ops](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/acl_policy) | resource |
 
 ## Inputs
 
-No input.
+No inputs.
 
 ## Outputs
 
-No output.
+No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
