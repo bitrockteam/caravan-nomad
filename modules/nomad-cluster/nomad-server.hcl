@@ -4,6 +4,7 @@ log_level = "DEBUG"
 server {
   enabled = true
   bootstrap_expect = 3
+  license_path = "/etc/nomad.d/license.hclic"
 }
 
 server_join {
