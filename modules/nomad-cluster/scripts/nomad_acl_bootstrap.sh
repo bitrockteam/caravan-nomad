@@ -19,10 +19,4 @@ export NOMAD_TOKEN="`sudo cat /root/nomad_tokens | awk '/Secret/{print $4}'`" &&
   vault write nomad/role/anon-restricted policies=nomad-anon-restricted
 }
 
-if [[ -n $LICENSE ]]
-then
-  echo "Adding Nomad License"
-  echo "$LICENSE" | nomad license put -token="$(sudo cat /root/nomad_tokens | awk '/Secret/{print $4}')" -
-fi
-
 sudo rm -f /root/nomad_tokens nomad-anon.hcl
