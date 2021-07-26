@@ -1,4 +1,4 @@
-# Nomad Cluster module
+# Caravan Nomad Cluster
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
