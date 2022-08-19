@@ -169,7 +169,7 @@ connection {
 }
 }
 provisioner "remote-exec" {
-  inline = ["chmod +x /tmp/nomad_join.sh && bash /tmp/nomad_join.sh"]
+  inline = ["chmod +x /tmp/nomad_join.sh && /tmp/nomad_join.sh"]
   connection {
     type                = "ssh"
     user                = var.ssh_user
@@ -207,7 +207,7 @@ resource "null_resource" "nomad_acl_bootstrap" {
   }
 
   provisioner "remote-exec" {
-    inline = ["chmod +x /tmp/nomad_acl_bootstrap.sh && bash /tmp/nomad_acl_bootstrap.sh"]
+    inline = ["chmod +x /tmp/nomad_acl_bootstrap.sh && /tmp/nomad_acl_bootstrap.sh"]
     connection {
       type                = "ssh"
       user                = var.ssh_user

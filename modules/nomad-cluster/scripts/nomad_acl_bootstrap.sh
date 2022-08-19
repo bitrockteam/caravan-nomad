@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 while ! curl --output /dev/null --silent --fail  http://localhost:4646/v1/status/leader; do   
